@@ -1,0 +1,53 @@
+@startuml
+skinparam roundcorner 15
+skinparam defaultFontSize 12
+
+start
+
+repeat
+  :effettua login ⋔;
+repeat while () is ([credenziali\nsbagliate/ non\npresenti])
+
+if () then ([log in come\ndiabetologo])
+
+  repeat
+    :visualizza paziente ⋔;
+    
+    ' Scelta azioni per il Diabetologo
+    if () then
+      :modifica paziente\n(fattori rischio/comorbidità) ⋔;
+    else if () then
+      :modifica terapia ⋔;
+    else if () then
+      :prescrivi nuova terapia ⋔;
+    else
+      :consulta andamento glicemico ⋔;
+    endif
+    
+  repeat while () is ([nuova operazione]) -> [logout / esci]
+  
+  stop
+
+else ([log in come\npaziente])
+
+  repeat
+    ' Scelta a 5 vie per il Paziente
+    if () then
+      :registra assunzione\nfarmaco ⋔;
+    else if () then
+      :effettua rilevazione\nglicemica ⋔;
+    else if () then
+      :registra patologia ⋔;
+    else if () then
+      :registra sintomo ⋔;
+    else
+      :registra terapia\nconcomitante ⋔;
+    endif
+    
+  repeat while () is ([nuova operazione]) -> [logout / esci]
+  
+  stop
+
+endif
+
+@enduml
