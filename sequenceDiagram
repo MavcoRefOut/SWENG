@@ -1,0 +1,232 @@
+Sito Usato: https://sequencediagram.org/
+
+Login:
+title Login
+
+actor Persona
+participant Sistema
+participant GestoreFile
+
+Persona -> Sistema: faiLogin(username, password)
+activate Sistema
+
+Sistema -> GestoreFile: caricaPerCredenziali(username, password)
+activate GestoreFile
+GestoreFile --> Sistema: esito Credenziali
+
+
+alt credenziali corrette e inserite nel sistema
+    GestoreFile-->Sistema: datiPersona():Persona
+    Sistema --> Persona: Persona Autenticata
+    Sistema->GestoreFile: ottieniNotifiche(codiceFiscale)
+    GestoreFile-->Sistema: invia notifiche
+    Sistema --> Persona: Mostra notifiche ricevute
+else credenziali errate
+    Sistema --> Persona: Mostra messaggio di errore
+    Sistema --> Persona: Riparti da FaiLogin
+end
+
+deactivate Sistema
+
+Effettua Rilevazione:
+
+title Effettua Rilevazione
+
+actor Paziente
+participant Sistema
+participant Rilevazione
+participant "p:Paziente" as Paz
+participant Notifica
+participant GestoreFile
+
+Paziente->Sistema: inserisciRilevazione(valoreGlicemia, prePasto)
+activate Sistema
+
+Sistema->Rilevazione: create(valoreGlicemia, prePasto)
+activate Rilevazione
+Rilevazione-->Sistema:rilevazioneCreate():Rilevazione
+deactivate Rilevazione
+Sistema->Paz: inserisciRilevazione(rilevazione:Rilevazione)
+activate Paz
+Paz->Paz: ControllaLivello(rilevazione:Rilevazione):Boolean
+
+opt esito == true
+    Paz->Notifica: inviaNotifica(notifica:Notifica)
+    activate Notifica
+    Notifica->GestoreFile:ScriviNotifica(notifica:Notifica)
+    activate GestoreFile
+    GestoreFile-->Notifica: conferma scrittura
+    Notifica-->Paz: conferma notifica
+    deactivate GestoreFile
+    deactivate Notifica
+end
+Paz-->Sistema:confermaInserimento():Boolean
+deactivate Paz
+
+Sistema->GestoreFile: SalvaRilevazione(rilevazione:Rilevazione)
+activate GestoreFile
+GestoreFile-->Sistema: Conferma salvataggio
+deactivate GestoreFile
+
+Sistema-->Paziente: Conferma salvataggio 
+deactivate Sistema
+
+Visualizza dati Paziente:
+
+ttitle Visualizza Dati Paziente
+
+actor "Diabetologo" as Medico
+participant Sistema
+participant "GestoreFile" as GF
+
+
+Medico->Sistema: cercaPaziente()
+Sistema-->Medico: richestaNomeCognome
+Medico -> Sistema : inserimentoNomeCongome(nome:String, congome:String)
+activate Sistema
+
+Sistema -> GF : cercaPazientePerNomeCognome(nome,Cognome)
+activate GF
+
+alt Paziente trovato
+    GF --> Sistema : datiPaziente():Paziente
+    deactivate GF
+    Sistema --> Medico : mostraDatiPaziente()
+else Paziente non trovato
+    activate GF
+    GF --> Sistema : paziente non trovato
+    deactivate GF
+    Sistema --> Medico : paziente non trovato
+end
+
+Modifica dati paziente:
+
+title Modifica Dati Paziente
+
+actor "Diabetologo" as Medico
+participant Sistema
+participant "Paziente" as Paziente
+participant "GestoreFile" as GF
+
+Medico -> Sistema : inserisciNuoviDati(datiAggiornati)
+activate Sistema
+
+Sistema -> Paziente : aggiornaDati(datiAggiornati)
+activate Paziente
+
+Paziente --> Sistema : conferma aggiornamento
+deactivate Paziente
+
+
+Sistema -> GF : aggiornaPaziente(paziente:Paziente)
+activate GF
+GF --> Sistema : esito aggiornamento
+deactivate GF
+
+Sistema -> GF : aggiornaLog(cfMedico, timestamp, dettagliModifica)
+ activate GF
+GF --> Sistema : confermaSalvataggioLog
+deactivate GF
+
+Sistema --> Medico : confermaSalvataggio()
+
+
+deactivate Sistema
+
+AssunzioneFarmaco:
+
+title Assume Farmaco
+
+actor Paziente
+participant Sistema
+participant "ass:Assunzione" as Assunzione
+participant "p: Paziente" as PazienteObj
+participant "t: Terapia" as Terapia
+participant "GestoreFile" as GF
+
+Paziente -> Sistema : inserisciDatiAssunzione(farmaco:Farmaco, dosaggio, dataOra)
+activate Sistema
+
+Sistema -> Assunzione : create(farmaco, dosaggio, dataOra)
+activate Assunzione
+Assunzione --> Sistema : ass
+deactivate Assunzione
+
+Sistema -> PazienteObj : inserisciAssunzione(ass: Assunzione)
+activate PazienteObj
+
+
+PazienteObj -> PazienteObj: getTerapiaAttiva(): Terapia
+PazienteObj ->Terapia: getDatiTerapia()
+activate Terapia
+Terapia-->PazienteObj: datiTerapia():Terapia
+deactivate Terapia
+PazienteObj -> PazienteObj:isCoerente(ass:Assunzione,t:Terapia):Boolean
+
+
+opt isCoerente == false
+    PazienteObj --> Paziente : inviaNotifica(notifica:Notifica)
+end
+
+PazienteObj -> GF : salvaAssunzione(p: Paziente, assunzione: Assunzione)
+activate GF
+GF --> PazienteObj : confermaSalvataggio
+deactivate GF
+PazienteObj-->Sistema: confermaSalvataggioAssunzione()
+
+Sistema --> Paziente : confermaSalvataggioAssunzione()
+deactivate Sistema
+
+ModificaAggiungiTerapia
+
+actor "Diabetologo" as D
+participant ":Sistema" as UI
+participant ":Terapia" as Terapia
+participant ":Paziente" as Paziente
+participant ":GestoreFile" as GF
+
+//se si riesce inserire riferimento a visualizza pazienti
+
+D -> UI : modificaAggiungi()
+activate UI
+UI-->D: scelta
+
+alt scelta: "Aggiungi nuova terapia"
+    D -> UI : inviaDatiTerapia(...)
+    UI ->Terapia: create(...)
+    activate Terapia
+    Terapia-->UI: terapia
+    deactivate Terapia
+    UI->Paziente:aggiungiTerapia(terapia:Terapia)
+    activate Paziente
+    Paziente-->UI:confermaInserimento()
+    deactivate Paziente
+    UI-->D: confermaInserimento()
+    
+
+else scelta: "Modifica terapia"
+    UI->Paziente: getTerapie()
+    activate Paziente
+    Paziente-->UI:terapie
+    deactivate Paziente
+    
+    UI --> D : mostraTerapie(terapie)
+    D -> UI : selezionaTerapia()
+    D -> UI : inviaDatiTerapia(...)
+    UI->Terapia:settaNuovidati(...)
+    activate Terapia
+    Terapia-->UI: confermaTerapia()
+    deactivate Terapia
+    
+end
+
+UI->GF: salvaModifichePazeinte(p:Paziente)
+activate GF
+GF-->UI:confermaSalvataggio
+UI->GF:modificaLog(cfMedico, timestamp, dettagliModifica)
+GF-->UI:confermaSalvataggio()
+deactivate GF
+UI-->D:confermaSalvataggio()
+
+
+
