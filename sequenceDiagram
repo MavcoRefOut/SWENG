@@ -5,28 +5,23 @@ title Login
 
 actor Persona
 participant Sistema
-participant GestoreFile
 
 Persona -> Sistema: faiLogin(username, password)
 activate Sistema
 
-Sistema -> GestoreFile: caricaPerCredenziali(username, password)
-activate GestoreFile
-GestoreFile --> Sistema: esito Credenziali
-
+Sistema -> Sistema: caricaPerCredenziali(username, password)
 
 alt credenziali corrette e inserite nel sistema
-    GestoreFile-->Sistema: datiPersona():Persona
-    Sistema --> Persona: Persona Autenticata
-    Sistema->GestoreFile: ottieniNotifiche(codiceFiscale)
-    GestoreFile-->Sistema: invia notifiche
-    Sistema --> Persona: Mostra notifiche ricevute
+
+    Sistema --> Persona: Persona autenticata e mostra notifiche
+
 else credenziali errate
     Sistema --> Persona: Mostra messaggio di errore
-    Sistema --> Persona: Riparti da FaiLogin
+
 end
 
 deactivate Sistema
+
 
 Effettua Rilevazione:
 
@@ -37,47 +32,42 @@ participant Sistema
 participant Rilevazione
 participant "p:Paziente" as Paz
 participant Notifica
-participant GestoreFile
 
 Paziente->Sistema: inserisciRilevazione(valoreGlicemia, prePasto)
 activate Sistema
 
 Sistema->Rilevazione: create(valoreGlicemia, prePasto)
 activate Rilevazione
-Rilevazione-->Sistema:rilevazioneCreate():Rilevazione
+Rilevazione-->Sistema:rilevazioneCreata():Rilevazione
 deactivate Rilevazione
 Sistema->Paz: inserisciRilevazione(rilevazione:Rilevazione)
 activate Paz
 Paz->Paz: ControllaLivello(rilevazione:Rilevazione):Boolean
 
 opt esito == true
-    Paz->Notifica: inviaNotifica(notifica:Notifica)
+    Paz->Notifica: create(mittente:Persona,destinatario:PersonatestoNotifica:String, gravità:LivelloGravità)
     activate Notifica
-    Notifica->GestoreFile:ScriviNotifica(notifica:Notifica)
-    activate GestoreFile
-    GestoreFile-->Notifica: conferma scrittura
-    Notifica-->Paz: conferma notifica
-    deactivate GestoreFile
+    Notifica->Paz:notificaCreata():Notifica
+
+    Paz-->Sistema: scriviNotifica(notifica:Notifica)
+
     deactivate Notifica
 end
 Paz-->Sistema:confermaInserimento():Boolean
 deactivate Paz
 
-Sistema->GestoreFile: SalvaRilevazione(rilevazione:Rilevazione)
-activate GestoreFile
-GestoreFile-->Sistema: Conferma salvataggio
-deactivate GestoreFile
 
 Sistema-->Paziente: Conferma salvataggio 
 deactivate Sistema
 
+
+
 Visualizza dati Paziente:
 
-ttitle Visualizza Dati Paziente
+title Visualizza Dati Paziente
 
 actor "Diabetologo" as Medico
-participant Sistema
-participant "GestoreFile" as GF
+participant ":Sistema" as Sistema
 
 
 Medico->Sistema: cercaPaziente()
@@ -85,17 +75,12 @@ Sistema-->Medico: richestaNomeCognome
 Medico -> Sistema : inserimentoNomeCongome(nome:String, congome:String)
 activate Sistema
 
-Sistema -> GF : cercaPazientePerNomeCognome(nome,Cognome)
-activate GF
+Sistema -> Sistema : cercaPazientePerNomeCognome(nome,Cognome):Paziente
+
 
 alt Paziente trovato
-    GF --> Sistema : datiPaziente():Paziente
-    deactivate GF
-    Sistema --> Medico : mostraDatiPaziente()
+    Sistema --> Medico : mostraPaziente():Paziente
 else Paziente non trovato
-    activate GF
-    GF --> Sistema : paziente non trovato
-    deactivate GF
     Sistema --> Medico : paziente non trovato
 end
 
@@ -104,32 +89,21 @@ Modifica dati paziente:
 title Modifica Dati Paziente
 
 actor "Diabetologo" as Medico
-participant Sistema
-participant "Paziente" as Paziente
-participant "GestoreFile" as GF
+participant ":Sistema" as Sistema
+participant ":Paziente" as Paziente
 
-Medico -> Sistema : inserisciNuoviDati(datiAggiornati)
+Medico -> Sistema : inserisciNuoviDati(paziente:Paziente)
 activate Sistema
 
-Sistema -> Paziente : aggiornaDati(datiAggiornati)
+Sistema -> Paziente : aggiornaDatiPaziente(paziente)
 activate Paziente
 
 Paziente --> Sistema : conferma aggiornamento
 deactivate Paziente
 
-
-Sistema -> GF : aggiornaPaziente(paziente:Paziente)
-activate GF
-GF --> Sistema : esito aggiornamento
-deactivate GF
-
-Sistema -> GF : aggiornaLog(cfMedico, timestamp, dettagliModifica)
- activate GF
-GF --> Sistema : confermaSalvataggioLog
-deactivate GF
+Sistema -> Sistema : aggiornaLog(cfMedico, timestamp, dettagliModifica:String)
 
 Sistema --> Medico : confermaSalvataggio()
-
 
 deactivate Sistema
 
@@ -138,43 +112,39 @@ AssunzioneFarmaco:
 title Assume Farmaco
 
 actor Paziente
-participant Sistema
-participant "ass:Assunzione" as Assunzione
-participant "p: Paziente" as PazienteObj
-participant "t: Terapia" as Terapia
-participant "GestoreFile" as GF
+participant ":Sistema" as Sistema
+participant ":Assunzione" as Assunzione
+participant ": Paziente" as PazienteObj
+participant ": Terapia" as Terapia
 
-Paziente -> Sistema : inserisciDatiAssunzione(farmaco:Farmaco, dosaggio, dataOra)
+Paziente -> Sistema : inserisciDatiAssunzione(terapia:Terapia, dosaggio, dataOra)
 activate Sistema
 
-Sistema -> Assunzione : create(farmaco, dosaggio, dataOra)
+Sistema -> Assunzione : create(terapia, dosaggio, dataOra)
 activate Assunzione
-Assunzione --> Sistema : ass
+Assunzione --> Sistema : assunzioneCreata():Assunzione
 deactivate Assunzione
 
-Sistema -> PazienteObj : inserisciAssunzione(ass: Assunzione)
+Sistema -> PazienteObj : inserisciAssunzione(assunzione: Assunzione)
 activate PazienteObj
 
 
-PazienteObj -> PazienteObj: getTerapiaAttiva(): Terapia
+
 PazienteObj ->Terapia: getDatiTerapia()
 activate Terapia
 Terapia-->PazienteObj: datiTerapia():Terapia
 deactivate Terapia
-PazienteObj -> PazienteObj:isCoerente(ass:Assunzione,t:Terapia):Boolean
+PazienteObj -> PazienteObj:isCoerente(assunzione:Assunzione):Boolean
 
 
 opt isCoerente == false
     PazienteObj --> Paziente : inviaNotifica(notifica:Notifica)
 end
 
-PazienteObj -> GF : salvaAssunzione(p: Paziente, assunzione: Assunzione)
-activate GF
-GF --> PazienteObj : confermaSalvataggio
-deactivate GF
-PazienteObj-->Sistema: confermaSalvataggioAssunzione()
 
-Sistema --> Paziente : confermaSalvataggioAssunzione()
+PazienteObj-->Sistema: conferma Salvataggio Assunzione
+
+Sistema --> Paziente : conferma Salvataggio Assunzione
 deactivate Sistema
 
 ModificaAggiungiTerapia
@@ -183,19 +153,18 @@ actor "Diabetologo" as D
 participant ":Sistema" as UI
 participant ":Terapia" as Terapia
 participant ":Paziente" as Paziente
-participant ":GestoreFile" as GF
 
 //se si riesce inserire riferimento a visualizza pazienti
 
-D -> UI : modificaAggiungi()
+D -> UI : modificaAggiungiTerapia()
 activate UI
 UI-->D: scelta
 
 alt scelta: "Aggiungi nuova terapia"
-    D -> UI : inviaDatiTerapia(...)
-    UI ->Terapia: create(...)
+    D -> UI : inviaDatiTerapia(farmaco:Farmaco,assunzioniGG:int,indicazioni:String,quantitàPrescritta:int)
+    UI ->Terapia: create(inviaDatiTerapia(farmaco,assunzioniGG,indicazioni,quantitàPrescritta)
     activate Terapia
-    Terapia-->UI: terapia
+    Terapia-->UI: terapiaCreata():Terapia
     deactivate Terapia
     UI->Paziente:aggiungiTerapia(terapia:Terapia)
     activate Paziente
@@ -207,25 +176,18 @@ alt scelta: "Aggiungi nuova terapia"
 else scelta: "Modifica terapia"
     UI->Paziente: getTerapie()
     activate Paziente
-    Paziente-->UI:terapie
+    Paziente-->UI:terapieAttive():Terapia[]
     deactivate Paziente
     
     UI --> D : mostraTerapie(terapie)
-    D -> UI : selezionaTerapia()
-    D -> UI : inviaDatiTerapia(...)
-    UI->Terapia:settaNuovidati(...)
+    D -> UI : inviaNuoviDatiTerapia(farmaco,assunzioniGG,indicazioni,quantitàPrescritta)
+    UI->Terapia:settaNuoviDati(farmaco,assunzioniGG,indicazioni,quantitàPrescritta)
     activate Terapia
-    Terapia-->UI: confermaTerapia()
+    Terapia-->UI: confermaNuoviDatiTerapia()
     deactivate Terapia
     
 end
 
-UI->GF: salvaModifichePazeinte(p:Paziente)
-activate GF
-GF-->UI:confermaSalvataggio
-UI->GF:modificaLog(cfMedico, timestamp, dettagliModifica)
-GF-->UI:confermaSalvataggio()
-deactivate GF
 UI-->D:confermaSalvataggio()
 
 
