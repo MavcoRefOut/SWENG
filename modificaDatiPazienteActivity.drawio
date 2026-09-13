@@ -1,0 +1,84 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="uz5J304hDked_MLaK73Q">
+    <mxGraphModel dx="1212" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0x_SPiKRLixTxwHystgA-1" parent="1" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="30" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-2" edge="1" parent="1" source="0x_SPiKRLixTxwHystgA-1" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="35" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" value="Visualizza Paziente⋔" vertex="1">
+          <mxGeometry height="40" width="120" x="140" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-4" edge="1" parent="1" source="0x_SPiKRLixTxwHystgA-3" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="0x_SPiKRLixTxwHystgA-5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" value="Inserisci nuovi dati del paziente" vertex="1">
+          <mxGeometry height="40" width="120" x="310" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-6" edge="1" parent="1" source="0x_SPiKRLixTxwHystgA-5" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="0x_SPiKRLixTxwHystgA-8" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="560" y="40" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-8" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="" vertex="1">
+          <mxGeometry height="60" width="80" x="570" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-9" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="" vertex="1">
+          <mxGeometry height="60" width="80" x="570" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-10" edge="1" parent="1" source="0x_SPiKRLixTxwHystgA-8" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="40" />
+            </Array>
+            <mxPoint x="660" y="80" as="sourcePoint" />
+            <mxPoint x="720" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" value="Aggiorna dati paziente" vertex="1">
+          <mxGeometry height="40" width="120" x="660" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="0x_SPiKRLixTxwHystgA-9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="143.58" />
+              <mxPoint x="720" y="240" />
+            </Array>
+            <mxPoint x="727.56" y="143.6" as="sourcePoint" />
+            <mxPoint x="680" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-13" edge="1" parent="1" source="0x_SPiKRLixTxwHystgA-8" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="0x_SPiKRLixTxwHystgA-9" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="560" y="110" as="sourcePoint" />
+            <mxPoint x="420" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-14" edge="1" parent="1" source="0x_SPiKRLixTxwHystgA-9" style="endArrow=classic;html=1;rounded=0;" target="0x_SPiKRLixTxwHystgA-15" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="414" y="230" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-15" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="595" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="[conferma modifiche]" vertex="1">
+          <mxGeometry height="30" width="60" x="730" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="0x_SPiKRLixTxwHystgA-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="[else]" vertex="1">
+          <mxGeometry height="30" width="60" x="535" y="105" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
