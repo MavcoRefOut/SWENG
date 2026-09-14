@@ -36,7 +36,7 @@ participant Notifica
 Paziente->Sistema: inserisciRilevazione(valoreGlicemia, prePasto)
 activate Sistema
 
-Sistema->Rilevazione: create(valoreGlicemia, prePasto)
+Sistema->Rilevazione: new(valoreGlicemia, prePasto)
 activate Rilevazione
 Rilevazione-->Sistema:rilevazioneCreata():Rilevazione
 deactivate Rilevazione
@@ -45,7 +45,7 @@ activate Paz
 Paz->Paz: ControllaLivello(rilevazione:Rilevazione):Boolean
 
 opt esito == true
-    Paz->Notifica: create(mittente:Persona,destinatario:PersonatestoNotifica:String, gravità:LivelloGravità)
+    Paz->Notifica: new(mittente:Persona,destinatario:PersonatestoNotifica:String, gravità:LivelloGravità)
     activate Notifica
     Notifica->Paz:notificaCreata():Notifica
 
@@ -120,7 +120,7 @@ participant ": Terapia" as Terapia
 Paziente -> Sistema : inserisciDatiAssunzione(terapia:Terapia, dosaggio, dataOra)
 activate Sistema
 
-Sistema -> Assunzione : create(terapia, dosaggio, dataOra)
+Sistema -> Assunzione : new(terapia, dosaggio, dataOra)
 activate Assunzione
 Assunzione --> Sistema : assunzioneCreata():Assunzione
 deactivate Assunzione
@@ -162,7 +162,7 @@ UI-->D: scelta
 
 alt scelta: "Aggiungi nuova terapia"
     D -> UI : inviaDatiTerapia(farmaco:Farmaco,assunzioniGG:int,indicazioni:String,quantitàPrescritta:int)
-    UI ->Terapia: create(inviaDatiTerapia(farmaco,assunzioniGG,indicazioni,quantitàPrescritta)
+    UI ->Terapia: new(inviaDatiTerapia(farmaco,assunzioniGG,indicazioni,quantitàPrescritta)
     activate Terapia
     Terapia-->UI: terapiaCreata():Terapia
     deactivate Terapia
