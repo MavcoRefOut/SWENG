@@ -1,5 +1,0 @@
-VRDGPP65B03L219K;N/D;BASSO;Rilevazione [Livello: 500 mg/dL, Ora: 21:04:56.892115600, Momento: Post-pasto]
-VRDGPP65B03L219K;N/D;BASSO;Rilevazione [Livello: 500 mg/dL, Ora: 21:05:34.519840100, Momento: Post-pasto]
-VRDGPP65B03L219K;N/D;BASSO;Rilevazione [Livello: 500 mg/dL, Ora: 21:05:54.999591900, Momento: Post-pasto]
-VRDGPP65B03L219K;N/D;BASSO;Rilevazione [Livello: 500 mg/dL, Ora: 21:06:14.211473, Momento: Post-pasto]
-VRDGPP65B03L219K;N/D;BASSO;Rilevazione [Livello: 500 mg/dL, Ora: 21:07:32.646776400, Momento: Post-pasto]
