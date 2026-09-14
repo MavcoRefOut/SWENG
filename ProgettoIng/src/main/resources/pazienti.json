@@ -1,0 +1,82 @@
+[ {
+  "codiceFiscale" : "THNTRN77E13Z404O",
+  "nome" : "Terrence",
+  "cognome" : "Thornton",
+  "dataNascita" : "1978-01-04T23:00:00.000+00:00",
+  "email" : "pushat@gmail.com",
+  "username" : "pushat",
+  "password" : "grams",
+  "diabetologoRiferimento" : {
+    "codiceFiscale" : "WSTKNY77H08Z404D",
+    "nome" : "Kanye",
+    "cognome" : "West",
+    "dataNascita" : "1977-08-05T22:00:00.000+00:00",
+    "email" : "kanye@gmail.com",
+    "username" : "ye",
+    "password" : "bully"
+  },
+  "rilevazioni" : [ ],
+  "segnalazioni" : [ ],
+  "terapie" : [ ],
+  "assunzioni" : [ ],
+  "breveDescrizione" : null
+}, {
+  "codiceFiscale" : "MSCSCT84A30Z404C",
+  "nome" : "Scott",
+  "cognome" : "Mescudi",
+  "dataNascita" : "1986-05-31T22:00:00.000+00:00",
+  "email" : "kidCudi@gmail.com",
+  "username" : "kidcudi",
+  "password" : "moon",
+  "diabetologoRiferimento" : {
+    "codiceFiscale" : "WSTKNY77H08Z404D",
+    "nome" : "Kanye",
+    "cognome" : "West",
+    "dataNascita" : "1977-08-05T22:00:00.000+00:00",
+    "email" : "kanye@gmail.com",
+    "username" : "ye",
+    "password" : "bully"
+  },
+  "rilevazioni" : [ {
+    "prePasto" : true,
+    "momentoRilevazione" : "2026-09-11T14:07:29.3475705",
+    "livelloGlicemia" : 90
+  }, {
+    "prePasto" : true,
+    "momentoRilevazione" : "2026-09-11T22:41:16.5418228",
+    "livelloGlicemia" : 1
+  } ],
+  "segnalazioni" : [ {
+    "tipo" : "Sintomo",
+    "dataInizio" : "2026-09-14",
+    "dataFine" : null,
+    "descrizione" : "Problemi di tossicodipendenza",
+    "nome" : "Astinenza"
+  }, {
+    "tipo" : "TerapiaConcomitante",
+    "dataInizio" : "2024-08-30",
+    "dataFine" : "2026-06-02",
+    "descrizione" : "Per curare ansia e tensione muscolare",
+    "farmaco" : "Valium"
+  } ],
+  "terapie" : [ {
+    "assunzioniGG" : 2,
+    "indicazioni" : "prima dei pasti 1 mg",
+    "quantita" : 1,
+    "farmaco" : {
+      "nomeFarmaco" : "Glucophage",
+      "principioAttivo" : "Metformina cloridrato"
+    },
+    "medicoPrescrittore" : {
+      "codiceFiscale" : "WSTKNY77H08Z404D",
+      "nome" : "Kanye",
+      "cognome" : "West",
+      "dataNascita" : "1977-08-05T22:00:00.000+00:00",
+      "email" : "kanye@gmail.com",
+      "username" : "ye",
+      "password" : "bully"
+    }
+  } ],
+  "assunzioni" : [ ],
+  "breveDescrizione" : "Nuova Descrizione"
+} ]
