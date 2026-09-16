@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+
+//classe che gestisce l'avvio della finestra iniziale di login
 public class Applicazione extends Application{
 
     @Override
