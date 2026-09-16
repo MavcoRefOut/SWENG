@@ -1,7 +1,7 @@
 package org.example;
 
 import java.time.LocalDate;
-
+//factory per generare terapie concomitanti tramite factory method
 public class CreatoreTerapiaConcomitante extends CreatoreSegnalazione{
     @Override
     public Segnalazione factoryMethod(LocalDate dataInizio, LocalDate dataFine, String descrizione, Object... parametri) {
