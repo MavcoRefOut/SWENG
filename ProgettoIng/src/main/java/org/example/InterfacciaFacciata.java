@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+//interfaccia per l'implementazione del pattern Facade
 public interface InterfacciaFacciata {
 
+    //firme dei metodi di cui viene fatto l'override in Facciata
     public Persona cercaPersona(String username, String password);
 
     public void verificaAderenzaTerapie(Diabetologo diabetologo) throws IOException;
