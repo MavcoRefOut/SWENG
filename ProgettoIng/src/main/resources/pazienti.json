@@ -1,0 +1,33 @@
+[ {
+  "codiceFiscale" : "MSCSCT84A30Z404C",
+  "nome" : "Scott",
+  "cognome" : "Mescudi",
+  "dataNascita" : "1986-05-30T22:00:00.000+00:00",
+  "email" : "kidCudi@gmail.com",
+  "username" : "kidcudi",
+  "password" : "moon",
+  "diabetologoRiferimento" : {
+    "codiceFiscale" : "WSTKNY77H08Z404D",
+    "nome" : "Kanye",
+    "cognome" : "West",
+    "dataNascita" : "1977-08-05T22:00:00.000+00:00",
+    "email" : "kanye@gmail.com",
+    "username" : "ye",
+    "password" : "bully"
+  },
+  "rilevazioni" : [ {
+    "prePasto" : true,
+    "momentoRilevazione" : "2026-09-15T19:20:34.2091673",
+    "livelloGlicemia" : 12
+  } ],
+  "segnalazioni" : [ {
+    "tipo" : "Sintomo",
+    "dataInizio" : "2026-09-15",
+    "dataFine" : null,
+    "descrizione" : "All good",
+    "nome" : "boh"
+  } ],
+  "terapie" : [ ],
+  "assunzioni" : [ ],
+  "breveDescrizione" : ""
+} ]

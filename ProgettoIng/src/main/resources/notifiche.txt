@@ -1,0 +1,4 @@
+
+MSCSCT84A30Z404C;WSTKNY77H08Z404D;ELEVATO;Il paziente non assume Glucophage da 3 giorni.
+MSCSCT84A30Z404C;WSTKNY77H08Z404D;ELEVATO;Il paziente non assume Glucophage da 3 giorni.
+MSCSCT84A30Z404C;WSTKNY77H08Z404D;BASSO;Rilevazione [Livello: 12 mg/dL, Ora: 19:20:34.209167300, Momento: Pre-pasto]

@@ -1,0 +1,10 @@
+[ {
+  "nomeFarmaco" : "Glucophage",
+  "principioAttivo" : "Metformina cloridrato"
+}, {
+  "nomeFarmaco" : "Diamicron",
+  "principioAttivo" : "Gliclazide"
+}, {
+  "nomeFarmaco" : "Lantus",
+  "principioAttivo" : "Insulina Glargine"
+} ]

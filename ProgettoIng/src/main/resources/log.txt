@@ -1,0 +1,9 @@
+BNCLRA78E50F205K modifica dati paziente VRDGPP65B03L219K settandoli a nome: Giuseppe, cognome: Green, dataNascita: Wed Feb 03 00:00:00 CET 1965, email: g.verdi@pec.it, username: gverdi65, password: VerdiPass#99
+BNCLRA78E50F205K modifica terapia del paziente VRDGPP65B03L219K con farmaco: Glucophage settandoli a quantita: 4, assunzioniGG: 2, indicazioni: Fare attenzione, causa sonnolenza
+BNCLRA78E50F205K aggiunge terapia al paziente VRDGPP65B03L219K con farmaco: Glucophage, quantita: 1, assunzioniGG: 1, indicazioni: Eviatare con alcool
+BNCLRA78E50F205K aggiunge terapia al paziente VRDGPP65B03L219K con farmaco: Diamicron, quantita: 2, assunzioniGG: 2, indicazioni: A stomaco vuoto
+WSTKNY77H08Z404D aggiunge terapia al paziente MSCSCT84A30Z404C con farmaco: Glucophage, quantita: 1, assunzioniGG: 2, indicazioni: prima dei pasti 1 mg
+WSTKNY77H08Z404D modifica note/descrizione paziente MSCSCT84A30Z404C: "Nuova Descrizioneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+WSTKNY77H08Z404D modifica note/descrizione paziente MSCSCT84A30Z404C: "Nuova Descrizione"
+MSCSCT84A30Z404C ha inserito una segnalazione di tipo Sintomo [Astinenza]
+MSCSCT84A30Z404C ha inserito una segnalazione di tipo Terapia Concomitante [Valium]
