@@ -29,8 +29,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//classe per la gestione della finestra del diabetologo e per gestire l'interazione con l'utente (diabetologo che inserisce / visualizza dati)
 public class ControlloreDiabetologo {
 
+    //oggetto Diabetologo per gestire il diabetologo che ha effettuato il login e le sue operazioni
     private Diabetologo diabetologo;
     InterfacciaFacciata f = new Facciata();
 
@@ -42,6 +44,7 @@ public class ControlloreDiabetologo {
         caricaNotifiche();
     }
 
+    //elementi della finestra
     @FXML
     private Button btnLogout;
 
@@ -74,18 +77,22 @@ public class ControlloreDiabetologo {
         String cognome = txtCognome.getText();
         Paziente paziente = f.cercaPazientePerNomeCognome(nome,cognome);
 
+        //se il paziente non è nullo (paziente trovato) visualizza l'andamento glicemico in base alle registrazioni effettuate
         if (paziente != null) {
             Alert alert = new Alert(Alert.AlertType.NONE);
             alert.setTitle("Dettagli Paziente - Andamento Glicemico");
             alert.setHeaderText("Paziente: " + paziente.getNome() + " " + paziente.getCognome());
 
+            //inizializzazione asse x
             CategoryAxis xAxis = new CategoryAxis();
             xAxis.setLabel("Data e Ora");
 
+            //inizializzazione asse y
             NumberAxis yAxis = new NumberAxis();
             yAxis.setLabel("Glicemia (mg/dL)");
             yAxis.setAutoRanging(true);
 
+            //Creazione grafico
             LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
             chart.setTitle("Andamento Glicemico (Ultimi 7 Giorni)");
             chart.setPrefSize(600, 350);
@@ -98,6 +105,7 @@ public class ControlloreDiabetologo {
 
             List<Rilevazione> rilevazioniRecenti = f.ottieniRilevazioni(paziente, LocalDateTime.now().minusDays(7));
 
+            //riempimento del grafico dell'andamento glicemico del paziente
             for (Rilevazione r : rilevazioniRecenti) {
                 String dataFormattata = r.getMomentoRilevazione().format(formatter);
                 serie.getData().add(new XYChart.Data<>(dataFormattata, r.getLivelloGlicemia()));
@@ -108,6 +116,7 @@ public class ControlloreDiabetologo {
             VBox layout = new VBox(10);
             layout.setPadding(new Insets(10));
 
+            //se non ci sono rilevazioni negli ultimi 7 giorni viene visualizzato un avviso, altrimenti viene visualizzato il grafico dell'andamento glicemico
             if (rilevazioniRecenti.isEmpty()) {
                 layout.getChildren().add(new Label("Nessuna rilevazione registrata negli ultimi 7 giorni."));
             } else {
@@ -116,6 +125,7 @@ public class ControlloreDiabetologo {
 
             alert.getDialogPane().setContent(layout);
 
+            //bottoni d'interazione del diabetologo
             ButtonType btnModifica = new ButtonType("Modifica Dati");
             ButtonType btnTerapie = new ButtonType("Mostra Terapie");
             ButtonType btnChiudi = new ButtonType("Chiudi", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -130,7 +140,7 @@ public class ControlloreDiabetologo {
                     modificaDatiPaziente(paziente);
                 }
             }
-        } else {
+        } else { //il paziente non è stato trovato, viene visualizzato un popup d'errore
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Ricerca Paziente");
             alert.setHeaderText(null);
@@ -160,6 +170,7 @@ public class ControlloreDiabetologo {
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         dialogStage.setTitle("Terapie di " + paziente.getNome() + " " + paziente.getCognome());
 
+        //vengono copiate tutte le terapia attuali del paziente
         ArrayList<Terapia> copiaTerapie = new ArrayList<>();
         if (f.ottieniTerapie(paziente) != null) {
             copiaTerapie.addAll(paziente.getTerapie());
@@ -168,6 +179,7 @@ public class ControlloreDiabetologo {
         ObservableList<Terapia> terapieOsservabili = FXCollections.observableArrayList(copiaTerapie);
         ListView<Terapia> listView = new ListView<>(terapieOsservabili);
 
+        //vengono visualizzate le terapie con la possibilità di modificarle tramite bottone e associata finestra
         listView.setCellFactory(param -> new ListCell<Terapia>() {
             private final Label lblDettagli = new Label();
             private final Button btnModifica = new Button("Modifica");
@@ -191,7 +203,7 @@ public class ControlloreDiabetologo {
                     setGraphic(null);
                 } else {
                     lblDettagli.setText(terapia.toString());
-
+                    //quando viene premuto il bottone di 'modifica terapia' viene aperta la form per l'inserimento delle modifiche
                     btnModifica.setOnAction(event -> {
                         Optional<Terapia> modificata = apriFormTerapia(terapia, medicoLoggato);
                         if (modificata.isPresent()) {
@@ -210,7 +222,7 @@ public class ControlloreDiabetologo {
                 }
             }
         });
-
+        //bottone e form per l'aggiunta di una terapia
         Button btnAggiungi = new Button("Aggiungi Nuova Terapia");
         btnAggiungi.setOnAction(event -> {
             Optional<Terapia> nuova = apriFormTerapia(null, medicoLoggato);
@@ -226,11 +238,13 @@ public class ControlloreDiabetologo {
             }
         });
 
+        //bottone per la conferma delle modifiche effettuate sul paziente
         Button btnConfermaCambiamenti = new Button("Conferma Cambiamenti");
         btnConfermaCambiamenti.setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16;");
         btnConfermaCambiamenti.setOnAction(event -> {
             try {
-                if(f.settaTerapie(new ArrayList<Terapia>(terapieOsservabili),paziente,logMomentaneo)) {
+                if(f.settaTerapie(new ArrayList<Terapia>(terapieOsservabili),paziente,logMomentaneo)) { 
+                    //se le modifiche sono state confermate viene visualizzato un Alert di successo
                     Alert alertSuccesso = new Alert(Alert.AlertType.INFORMATION);
                     alertSuccesso.setTitle("Salvataggio");
                     alertSuccesso.setHeaderText(null);
@@ -241,13 +255,15 @@ public class ControlloreDiabetologo {
                 throw new RuntimeException(e);
             }
         });
-
+        //bottone per annullare le modifiche e per chiudere la form delle modifiche
         Button btnAnnulla = new Button("Annulla");
         btnAnnulla.setOnAction(event -> dialogStage.close());
 
+        //box che contiene i vari bottoni
         HBox boxBottoni = new HBox(10, btnAggiungi, btnAnnulla, btnConfermaCambiamenti);
         boxBottoni.setAlignment(Pos.CENTER_RIGHT);
 
+        //Vbox che visualizza le terapie del paziente
         VBox root = new VBox(12, new Label("Elenco Terapie:"), listView, boxBottoni);
         root.setPadding(new Insets(15));
         root.setPrefSize(680, 440);
@@ -261,12 +277,15 @@ public class ControlloreDiabetologo {
         Dialog<Terapia> dialog = new Dialog<>();
         boolean isModifica = (terapiaEsistente != null);
 
+        //in base alla scelta di modifica o nuova terapia vengono visualizzati i giusti testi
         dialog.setTitle(isModifica ? "Modifica Terapia" : "Nuova Terapia");
         dialog.setHeaderText(isModifica ? "Aggiorna i parametri della terapia" : "Compila i dati per la nuova terapia");
 
+        //in base alla scelta di modifica o nuova terapia vengono visualizzati i giusti testi
         ButtonType btnSalvaForm = new ButtonType(isModifica ? "Applica" : "Aggiungi", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btnSalvaForm, ButtonType.CANCEL);
 
+        //combobox per visualizzare i farmaci con toString adattato
         ComboBox<Farmaco> cmbFarmaci = new ComboBox<>();
         try {
             ArrayList<Farmaco> listaFarmaci = f.caricaTuttiFarmaci();
@@ -296,11 +315,12 @@ public class ControlloreDiabetologo {
             if (!n.matches("\\d*")) txtAssunzioniGG.setText(v);
         });
 
+        //se si vuole modificare la terapia vengono mostrate informazioni sulla terapia da modificare
         if (isModifica) {
             txtQuantita.setText(String.valueOf(terapiaEsistente.getQuantita()));
             txtAssunzioniGG.setText(String.valueOf(terapiaEsistente.getAssunzioniGG()));
             txtIndicazioni.setText(terapiaEsistente.getIndicazioni() != null ? terapiaEsistente.getIndicazioni() : "");
-
+            //se la modifica viene fatta su un farmaco esistente in una terapia allora viene aggiornato
             if (terapiaEsistente.getFarmaco() != null) {
                 for (Farmaco f : cmbFarmaci.getItems()) {
                     if (f.getNomeFarmaco().equalsIgnoreCase(terapiaEsistente.getFarmaco().getNomeFarmaco())) {
@@ -311,6 +331,7 @@ public class ControlloreDiabetologo {
             }
         }
 
+        //nel GridPane vengono visualizzate le informazioni sulla terapia
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -327,6 +348,7 @@ public class ControlloreDiabetologo {
 
         dialog.getDialogPane().setContent(grid);
 
+        //quando viene premuto il bottone per salvare vengono salvate le modifiche
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnSalvaForm) {
                 Farmaco farmacoScelto = cmbFarmaci.getValue();
@@ -365,16 +387,18 @@ public class ControlloreDiabetologo {
         }
     }
 
-    //modifica i dati e alva su log CONTROLLATA
+    //modifica i dati e salva su log CONTROLLATA
     private void modificaDatiPaziente(Paziente paziente) throws IOException {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Modifica Paziente");
         dialog.setHeaderText("Inserisci una breve descrizione");
 
+        //visualizzazione bottoni salva e annulla
         ButtonType btnSalva = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
         ButtonType btnAnnulla = new ButtonType("Annulla", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(btnSalva, btnAnnulla);
 
+        //visualizzazione textArea per l'inserimento della descrizione del paziente
         TextArea txtDescrizione = new TextArea();
         txtDescrizione.setPromptText("Inserisci qui la descrizione...");
         txtDescrizione.setWrapText(true);
@@ -385,6 +409,7 @@ public class ControlloreDiabetologo {
             txtDescrizione.setText(paziente.getBreveDescrizione());
         }
 
+        //viene visualizzata la descrizione del paziente
         VBox content = new VBox(10, new Label("Descrizione:"), txtDescrizione);
         VBox.setVgrow(txtDescrizione, Priority.ALWAYS);
         content.setPadding(new Insets(20));
@@ -405,6 +430,7 @@ public class ControlloreDiabetologo {
             return null;
         });
 
+        //se sono presenti il paziente e la breve descrizione allora viene messa al paziente
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent() && !result.get().isEmpty()) {
             String descrizione = result.get();
@@ -413,12 +439,12 @@ public class ControlloreDiabetologo {
 
             String modifica = f.ottieniCf(diabetologo) + " modifica note/descrizione paziente "
                     + paziente.getCodiceFiscale() + ": \"" + descrizione + "\"";
-
+            //viene messa nel log la modifica al paziente da parte del diabetologo
             f.scriviLog(modifica);
         }
     }
 
-    //CONTROLLATA
+    //CONTROLLATA, quando viene premuta una notifica viene visualizzata ed eliminata
     @FXML
     private void eliminaNotifica(ActionEvent evento){
         String notificaSelezionata = listViewListaNotifiche.getSelectionModel().getSelectedItem();
@@ -434,19 +460,22 @@ public class ControlloreDiabetologo {
         f.eliminaNotifica(notificaSelezionata);
     }
 
-    //CONTROLLATA
+    //CONTROLLATA, viene visualizzata la form per l'invio di una mail al paziente
     @FXML
     private void inviaMail(ActionEvent evento) {
         Dialog<Map<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Invio Email");
         dialog.setHeaderText("Inserisci l'indirizzo email e il messaggio");
 
+        //bottone invio emeail
         ButtonType btnInvia = new ButtonType("Invia", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btnInvia, ButtonType.CANCEL);
 
+        //inserimento destinatario
         TextField txtEmail = new TextField();
         txtEmail.setPromptText("destinatario@esempio.it");
 
+        //inserimento testo email
         TextArea txtMessaggio = new TextArea();
         txtMessaggio.setPromptText("Scrivi qui il messaggio...");
         txtMessaggio.setWrapText(true);
@@ -462,8 +491,10 @@ public class ControlloreDiabetologo {
         grid.add(new Label("Messaggio:"), 0, 1);
         grid.add(txtMessaggio, 1, 1);
 
+        //visualizzazione elementi aggiunti alla form
         dialog.getDialogPane().setContent(grid);
 
+        //quando viene premuto il bottone btnInvia viene inviata la mail al paziente
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnInvia) {
                 Map<String, String> risultato = new HashMap<>();
@@ -475,7 +506,7 @@ public class ControlloreDiabetologo {
         });
 
         Optional<Map<String, String>> input = dialog.showAndWait();
-
+        //verifica dati dell'email
         input.ifPresent(dati -> {
             String email = dati.get("email");
             String messaggio = dati.get("messaggio");
@@ -503,7 +534,7 @@ public class ControlloreDiabetologo {
         });
     }
 
-    //CONTROLLATA
+    //CONTROLLATA, visualizza alert vari prodotti dall'interazione del diabetologo con le form
     private void mostraAlert(Alert.AlertType tipo, String titolo, String messaggio) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titolo);
