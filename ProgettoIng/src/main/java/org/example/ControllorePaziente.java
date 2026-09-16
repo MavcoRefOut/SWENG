@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
+//gestore della form del paziente
 public class ControllorePaziente {
 
     private InterfacciaFacciata f;
@@ -92,6 +92,7 @@ public class ControllorePaziente {
             }
         });
 
+        //scelta pre / post pasto
         CheckBox chkBooleano = new CheckBox("Pre Pasto");
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -103,15 +104,18 @@ public class ControllorePaziente {
         grid.add(new Label("Opzione:"), 0, 1);
         grid.add(chkBooleano, 1, 1);
 
+        //visualizzazione dati nella form
         dialog.getDialogPane().setContent(grid);
         Optional<ButtonType> risultato = dialog.showAndWait();
 
+        //controllo inserimento dati
         if (risultato.isPresent() && risultato.get() == btnSalva) {
             String testo = txtNumero.getText().trim();
             if (!testo.isEmpty()) {
                 double valore = Double.parseDouble(testo);
                 boolean opzioneSelezionata = chkBooleano.isSelected();
                 LocalDateTime ora = LocalDateTime.now();
+                //inserimento rilevazione nel paziente
                 f.inserisciRilevazione(paziente, new Rilevazione(opzioneSelezionata,ora,(int)valore));
             }
         }
@@ -132,7 +136,7 @@ public class ControllorePaziente {
         currentStage.close();
     }
 
-    //CONTROLLATA
+    //CONTROLLATA, caricamento notifiche ricevute 
     private void caricaNotifiche(){
         try {
             if (paziente == null) {
@@ -169,6 +173,7 @@ public class ControllorePaziente {
         dialog.setTitle("Nuova Segnalazione");
         dialog.setHeaderText("Inserisci un sintomo, una patologia o una terapia concomitante");
 
+        //bottoni per confermare o annullare l'inserimento della segnalazione
         ButtonType btnSalva = new ButtonType("Conferma", ButtonBar.ButtonData.OK_DONE);
         ButtonType btnAnnulla = new ButtonType("Annulla", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(btnSalva, btnAnnulla);
@@ -178,23 +183,28 @@ public class ControllorePaziente {
         grid.setVgap(12);
         grid.setPadding(new Insets(20));
 
+        //scelta tra sintomo, patologia o terapia concomitante
         ComboBox<String> cmbTipo = new ComboBox<>();
         cmbTipo.getItems().addAll("Sintomo", "Patologia", "Terapia Concomitante");
         cmbTipo.setValue("Sintomo");
         cmbTipo.setMaxWidth(Double.MAX_VALUE);
 
+        //inserimento nome sintomo
         Label lblNome = new Label("Nome Sintomo:");
         TextField txtNome = new TextField();
         txtNome.setPromptText("Es. Nausea, Spossatezza...");
         GridPane.setHgrow(txtNome, Priority.ALWAYS);
 
+        //inserimento data inizio
         DatePicker datePickerInizio = new DatePicker(LocalDate.now());
         datePickerInizio.setMaxWidth(Double.MAX_VALUE);
 
+        //inserimento data fine
         DatePicker datePickerFine = new DatePicker();
         datePickerFine.setPromptText("Lascia vuoto se ancora in corso");
         datePickerFine.setMaxWidth(Double.MAX_VALUE);
 
+        //inserimento note aggiuntive
         TextArea txtDescrizione = new TextArea();
         txtDescrizione.setPromptText("Eventuali note o dettagli aggiuntivi...");
         txtDescrizione.setPrefRowCount(2);
@@ -215,8 +225,10 @@ public class ControllorePaziente {
         grid.add(new Label("Descrizione/Note:"), 0, 4);
         grid.add(txtDescrizione, 1, 4);
 
+        //visualizzazione informazioni e scelte del paziente
         dialog.getDialogPane().setContent(grid);
 
+        //controllo della scelta del paziente riguardante la segnalazione
         cmbTipo.valueProperty().addListener((obs, oldVal, newVal) -> {
             if ("Sintomo".equals(newVal)) {
                 lblNome.setText("Nome Sintomo:");
@@ -238,6 +250,7 @@ public class ControllorePaziente {
             boolean dataInizioOk = datePickerInizio.getValue() != null;
 
             boolean dateCoerenti = true;
+            //verifica coerenza date
             if (datePickerFine.getValue() != null && datePickerInizio.getValue() != null) {
                 dateCoerenti = !datePickerFine.getValue().isBefore(datePickerInizio.getValue());
             }
@@ -249,6 +262,7 @@ public class ControllorePaziente {
         datePickerInizio.valueProperty().addListener((o, prev, cur) -> validaInput.run());
         datePickerFine.valueProperty().addListener((o, prev, cur) -> validaInput.run());
 
+        //salvataggio dati inseriti
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == btnSalva) {
             String tipo = cmbTipo.getValue();
@@ -259,6 +273,7 @@ public class ControllorePaziente {
 
             CreatoreSegnalazione creatore = null;
 
+            //creazione segnalazione specifica con dati inseriti tramite factory method
             switch (tipo) {
                 case "Sintomo":
                     creatore = new CreatoreSintomo();
@@ -272,6 +287,7 @@ public class ControllorePaziente {
                     creatore = new CreatoreTerapiaConcomitante();
                     break;
             }
+            //se è stato istanziato il creatore allora viene aggiunta la segnalazione al paziente
             if(creatore!=null){
                 Boolean ris = f.aggiungiSegnalazione(paziente,creatore,dataInizio,dataFine,noteVal,nomeVal);
                 if(ris){
@@ -281,7 +297,7 @@ public class ControllorePaziente {
         }
     }
 
-    //CONTROLLATA
+    //CONTROLLATA, inserimento dati assunzione di farmaci da parte del paziente
     @FXML
     private void inserisciDatiAssunzione(ActionEvent evento) throws IOException {
         if (paziente == null) {
@@ -291,6 +307,7 @@ public class ControllorePaziente {
 
         List<Terapia> terapieDisponibili = paziente.getTerapie();
 
+        //avviso se non sono presenti terapie del paziente
         if (terapieDisponibili == null || terapieDisponibili.isEmpty()) {
             mostraAlert(Alert.AlertType.WARNING, "Attenzione", "Il paziente non ha alcuna terapia prescritta attiva.");
             return;
@@ -307,6 +324,7 @@ public class ControllorePaziente {
         comboTerapie.getItems().addAll(terapieDisponibili);
         comboTerapie.getSelectionModel().selectFirst();
 
+        //toString della lista di farmaci da assumere con indicazione e assunzioni giornaliere
         comboTerapie.setConverter(new StringConverter<Terapia>() {
             @Override
             public String toString(Terapia t) {
@@ -322,6 +340,7 @@ public class ControllorePaziente {
             }
         });
 
+        //inserimento quantitàa assunta
         Spinner<Integer> spinnerQuantita = new Spinner<>(1, 100, 1);
         spinnerQuantita.setEditable(true);
 
@@ -335,8 +354,10 @@ public class ControllorePaziente {
         grid.add(new Label("Quantità:"), 0, 1);
         grid.add(spinnerQuantita, 1, 1);
 
+        //visualizzazione informazioni sull'assunzione a schermo
         dialog.getDialogPane().setContent(grid);
 
+        //quando viene premuto il btnRegistra viene salvata l'assunzione con le sue info
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnRegistra) {
                 Terapia terapiaScelta = comboTerapie.getValue();
@@ -350,6 +371,7 @@ public class ControllorePaziente {
 
         Optional<Assunzione> risultato = dialog.showAndWait();
 
+        //viene inserita l'assunzione con controllo d'eccezione
         risultato.ifPresent(nuovaAssunzione -> {
                 try {
                     f.inserisciAssunzione(paziente, nuovaAssunzione);
@@ -359,7 +381,7 @@ public class ControllorePaziente {
             });
     }
 
-    //CONTROLLATA
+    //CONTROLLATA, invio mail, analogo a quello del diabetologo adattato al paziente
     @FXML
     private void inviaMail(ActionEvent evento) {
         if (paziente == null) {
@@ -367,25 +389,30 @@ public class ControllorePaziente {
             return;
         }
 
+        //ottenimento diabetologo di riferimento
         Diabetologo medico = f.ottieniDiabetologo(paziente);
         if (medico == null || medico.getEmail() == null || medico.getEmail().trim().isEmpty()) {
             mostraAlert(Alert.AlertType.ERROR, "Destinatario non valido", "Nessun medico di riferimento o email mancante.");
             return;
         }
 
+        //informazioni sul destiantario
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Contatta Medico Curante");
         dialog.setHeaderText("Invia un messaggio al Dr. " + medico.getNome() + " " + medico.getCognome());
 
+        //bottone d'invio email
         ButtonType btnInvia = new ButtonType("Invia Mail", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btnInvia, ButtonType.CANCEL);
 
+        //informazioni sul testo del messaggio
         TextArea txtMessaggio = new TextArea();
         txtMessaggio.setPromptText("Scrivi qui il messaggio per il tuo medico...");
         txtMessaggio.setWrapText(true);
         txtMessaggio.setPrefRowCount(7);
         txtMessaggio.setPrefColumnCount(30);
-
+        
+        //area per l'inserimento del testo del messaggio
         VBox contenuto = new VBox(10, new Label("Testo della mail:"), txtMessaggio);
         contenuto.setPadding(new Insets(15));
         dialog.getDialogPane().setContent(contenuto);
@@ -399,6 +426,7 @@ public class ControllorePaziente {
 
         Optional<String> testoMessaggio = dialog.showAndWait();
 
+        //controllo sull'inserimento del messaggio
         testoMessaggio.ifPresent(messaggio -> {
             if (messaggio.isEmpty()) {
                 mostraAlert(Alert.AlertType.WARNING, "Messaggio vuoto", "Il testo della mail non può essere vuoto.");
@@ -408,6 +436,7 @@ public class ControllorePaziente {
             String oggetto = "Comunicazione da paziente: " + paziente.getNome() + " " + paziente.getCognome()+"'"
                     +txtMessaggio.getText()+"'";
 
+            //generazione della notifica per il diabetologo
             Notifica notifica = new Notifica(paziente, paziente.getDiabetologoRiferimento(),oggetto,LivelloPericolo.BASSO);
             try {
                 f.scriviNotifica(notifica);
