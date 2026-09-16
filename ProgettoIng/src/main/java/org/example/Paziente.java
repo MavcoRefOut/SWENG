@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
+//classe che descrive un paziente, che è una persona
 public class Paziente extends Persona {
 
     private Diabetologo diabetologoRiferimento;
@@ -17,10 +18,12 @@ public class Paziente extends Persona {
     private String breveDescrizione;
     private Notifica notGlobale;
 
+    //costruttore di default della classe, usa quello di Persona
     public Paziente(){
         super();
     }
 
+    //costruttore con parametri della classe, usa quello di Persona
     public Paziente(Diabetologo diab, String codiceFiscale, String nome, String cognome, Date dataNascita, String email, String username, String password) {
         super(codiceFiscale, nome, cognome, dataNascita, email, username, password);
         rilevazioni = new ArrayList<Rilevazione>();
@@ -32,15 +35,17 @@ public class Paziente extends Persona {
         notGlobale = null;
     }
 
+    //getter del campo della classe omonimo
     public ArrayList<Rilevazione> getRilevazioni() {
         return rilevazioni;
     }
 
+    //setter del campo della classe omonimo
     public void setRilevazioni(ArrayList<Rilevazione> rilevazioni) {
         this.rilevazioni = rilevazioni;
     }
 
-
+    //metodo che inserisce una rilevazione del livello di glicemia, eventualmente inviando una notifica se il livello è anomalo
     public Notifica inserisciRilevazione(Rilevazione rilevazione) throws IOException {
         Notifica not = null;
         rilevazioni.add(rilevazione);
@@ -50,6 +55,7 @@ public class Paziente extends Persona {
         return not;
     }
 
+    //metodo che controlla se il livello di glicemia rilevato è conforme al livello indicato in base all'orario
     private Boolean controllaLivello(Rilevazione rilevazione){
         int valore = rilevazione.getLivelloGlicemia();
         if (rilevazione.getPrePasto()) {
@@ -58,45 +64,59 @@ public class Paziente extends Persona {
         return valore > 180;
     }
 
+    //getter del campo della classe omonimo
     public ArrayList<Segnalazione> getSegnalazioni() {
         return segnalazioni;
     }
 
+    //setter del campo della classe omonimo
     public void setSegnalazioni(ArrayList<Segnalazione> condizioni) {
         this.segnalazioni = condizioni;
     }
 
+    //metodo per aggiungere una condizione del paziente
     public Boolean inserisciSegnalazione(Segnalazione condizione){
         return segnalazioni.add(condizione);
     }
 
+    //getter del campo della classe omonimo
     public ArrayList<Terapia> getTerapie() {
         return terapie;
     }
 
+    //setter del campo della classe omonimo
     public void setTerapie(ArrayList<Terapia> terapie) {
         this.terapie = terapie;
     }
 
+    //getter del campo della classe omonimo
     public ArrayList<Assunzione> getAssunzioni() {
         return assunzioni;
     }
 
+    //setter del campo della classe omonimo
     public void setAssunzioni(ArrayList<Assunzione> assunzioni) {
         this.assunzioni = assunzioni;
     }
 
+    //metodo per aggiungere una terapia al paziente 
     public Boolean aggiungiTerapia(Terapia terapia){
         return terapie.add(terapia);
     }
 
+    //getter del campo della classe omonimo
     public Diabetologo getDiabetologoRiferimento(){return diabetologoRiferimento;}
-
+    
+    //setter del campo della classe omonimo
     public void setDiabetologoRiferimento(Diabetologo diabetologoRiferimento){this.diabetologoRiferimento = diabetologoRiferimento;}
 
+    //getter del campo della classe omonimo
     public String getBreveDescrizione(){return breveDescrizione;}
+
+    //setter del campo della classe omonimo
     public void setBreveDescrizione(String breveDescrizione){this.breveDescrizione = breveDescrizione;}
 
+    //override del metodo toString adattato alla classe
     @Override
     public String toString() {
         return "Nome='" + getNome() + '\'' +
@@ -110,7 +130,7 @@ public class Paziente extends Persona {
                 ", assunzioniCount=" + (assunzioni != null ? assunzioni.size() : 0);
     }
 
-    //aggiunge un assunzione e verifica che segua le terapie prescritte
+    //aggiunge un'assunzione e verifica che segua le terapie prescritte
     public Notifica inserisciAssunzione(Assunzione assunzione) throws IOException {
         Boolean returnValue = isCoerente(assunzione);
         if(returnValue==true){
@@ -124,6 +144,7 @@ public class Paziente extends Persona {
         return null;
     }
 
+    //controlla che un assunzione sia coerente alle indicazioni della terapia da seguire, mandando notifiche personalizzate in base alla 'trasgressione' dalle indicazioni
     private boolean isCoerente(Assunzione assunzione){
         if (assunzione == null) {
             return false;
@@ -168,7 +189,7 @@ public class Paziente extends Persona {
         return true;
     }
 
-    //Controlla se non è stata seguita per tre giorni o più
+    //Controlla se la terapia non è stata seguita per tre giorni o più, inviando una notifica eventualmente
     public Notifica verificaAderenzaTerapie(Boolean isMedico) throws IOException {
         Notifica ritorno = null;
         if (this.terapie == null || this.terapie.isEmpty()) {
@@ -177,20 +198,23 @@ public class Paziente extends Persona {
 
         LocalDate oggi = LocalDate.now();
 
+        //scorre i farmaci della terapia
         for (Terapia terapia : this.terapie) {
             Farmaco farmaco = terapia.getFarmaco();
             if (farmaco == null) continue;
 
+            //trova la data più recente in cui è stata seguita la terapia
             Optional<LocalDate> ultimaData = (this.assunzioni == null) ? Optional.empty() :
                     this.assunzioni.stream()
                             .filter(a -> a.getFarmacoAssunto() != null && a.getFarmacoAssunto().equals(farmaco))
                             .map(a -> a.getOrarioAssunzione().toLocalDateTime().toLocalDate())
                             .max(LocalDate::compareTo);
 
+            //dalla data trovata prima calcola i giorni dall'ultima giornata 'corretta'
             long giorniSenzaAssunzione = ultimaData
                     .map(data -> ChronoUnit.DAYS.between(data, oggi))
                     .orElse(3L);
-
+            //prepara la notifica personalizzata
             if (giorniSenzaAssunzione >= 3) {
                 Diabetologo medico = terapia.getMedicoPrescrittore();
                 String nomeFarmaco = farmaco.getNomeFarmaco();
