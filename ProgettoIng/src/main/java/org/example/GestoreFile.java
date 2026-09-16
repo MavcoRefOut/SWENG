@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//classe che gestisce l'interazione con il file system, ovvero i file dove sono presenti le varie informazioni di servizio per il funzionamento del sistema
 public class GestoreFile {
 
     public GestoreFile(){}
-
+    
+    //il log delle operazioni dei diabetologi e le notifiche sono in file txt separando con ';', mentre tutto il resto è in json per facilitare la serializzazione degli oggetti
     private static final String SEPARATORE = ";";
     private static String pathNotifiche = "src/main/resources/notifiche.txt";
     private static String pathPaziente = "src/main/resources/pazienti.json";
@@ -29,7 +31,7 @@ public class GestoreFile {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .enable(SerializationFeature.INDENT_OUTPUT);
 
-    //cerca il utenti per credenzili
+    //cerca il utenti per credenzili, ritorna la persona che sta provando ad accedere
     public Persona cercaPerCredenziali(String us, String pass) {
         if (us == null || pass == null || us.trim().isEmpty() || pass.trim().isEmpty()) {
             return null;
@@ -38,7 +40,9 @@ public class GestoreFile {
         String username = us.trim();
         String password = pass.trim();
 
+        //prova ad aprire il file e vedere la corrispondenza tra credenziali inserite e credenziali presenti nel file
         try {
+            //controlla se sta provando ad accedere un diabetologo
             File fileMedici = new File(pathDiabetologo);
             if (fileMedici.exists() && fileMedici.length() > 0) {
                 List<Diabetologo> medici = jsonMapper.readValue(fileMedici, new TypeReference<List<Diabetologo>>() {});
@@ -53,6 +57,7 @@ public class GestoreFile {
                     }
                 }
             }
+             //controlla se sta provando ad accedere un paziente
             File filePazienti = new File(pathPaziente);
             if (filePazienti.exists() && filePazienti.length() > 0) {
                 List<Paziente> pazienti = jsonMapper.readValue(filePazienti, new TypeReference<List<Paziente>>() {});
@@ -71,7 +76,7 @@ public class GestoreFile {
         } catch (IOException e) {
             System.err.println("Errore durante la lettura dei file JSON: " + e.getMessage());
         }
-
+        //se non c'è ritorna null => messaggio d'errore credenziali sbagliate / assenti
         return null;
     }
 
@@ -91,7 +96,7 @@ public class GestoreFile {
             if (tuttiPazienti == null) {
                 return null;
             }
-
+            //ritorna il paziente trovato o meno filtrando sulla stream dei pazienti ottenuta dal file
             return tuttiPazienti.stream()
                     .filter(p -> p.getNome() != null && p.getCognome() != null
                             && p.getNome().trim().equalsIgnoreCase(nome.trim())
@@ -118,17 +123,19 @@ public class GestoreFile {
     public ArrayList<String> ottieniNotifiche(String codiceFiscale) throws FileNotFoundException {
         ArrayList<String> notificheTrovate = new ArrayList<>();
 
+        //controlla che il codice fiscale sia stato inserito
         if (codiceFiscale == null || codiceFiscale.trim().isEmpty()) {
             return notificheTrovate;
         }
 
+        //controlla che il file esista
         File file = new File(pathNotifiche);
         if (!file.exists()) {
             return notificheTrovate;
         }
 
         String targetCf = codiceFiscale.trim().toUpperCase();
-
+        //legge una riga finchè non trova testo
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String riga;
             while ((riga = reader.readLine()) != null) {
@@ -137,7 +144,7 @@ public class GestoreFile {
                 }
 
                 String[] campi = riga.split(SEPARATORE, -1);
-
+                //salva le infomazioni della notifica
                 if (campi.length >= 4) {
                     String cfDestinatario = campi[1].trim();
 
@@ -145,7 +152,7 @@ public class GestoreFile {
                         String cfMandante = campi[0].trim();
                         String livello = campi[2].trim();
                         String testo = campi[3].trim();
-
+                        //aggiunge le info nella lista di notifiche che verranno visualizzate
                         notificheTrovate.add(riga);
                     }
                 }
@@ -283,7 +290,7 @@ public class GestoreFile {
         if (codiceFiscale == null || codiceFiscale.trim().isEmpty()) {
             return null;
         }
-
+        //apre il file con i dati dei pazienti
         File file = new File(pathPaziente);
         if (!file.exists() || file.length() == 0) {
             return null;
@@ -291,6 +298,7 @@ public class GestoreFile {
 
         ArrayList<Paziente> listaPazienti = jsonMapper.readValue(file, new TypeReference<ArrayList<Paziente>>() {});
 
+        //scorre tutto il file finchè non trova il CF cercato, ritornando il paziente o null se non lo trova
         String target = codiceFiscale.trim();
         for (Paziente p : listaPazienti) {
             if (p.getCodiceFiscale() != null && target.equalsIgnoreCase(p.getCodiceFiscale().trim())) {
@@ -300,7 +308,7 @@ public class GestoreFile {
 
         return null;
     }
-
+    //metodo per scrivere un farmaco nel file contenente le lista dei farmaci
     public void salvaFarmaco(Farmaco farmaco) throws IOException {
         if (farmaco == null) {
             throw new IllegalArgumentException("Il farmaco non può essere nullo");
@@ -330,6 +338,7 @@ public class GestoreFile {
         return jsonMapper.readValue(file, new TypeReference<ArrayList<Farmaco>>() {});
     }
 
+    //metodo che cerca un farmaco nel file per nome commerciale
     public Farmaco cercaFarmacoPerNome(String nomeFarmaco) throws IOException {
         if (nomeFarmaco == null || nomeFarmaco.trim().isEmpty()) {
             return null;
@@ -347,6 +356,7 @@ public class GestoreFile {
         return null;
     }
 
+    //metodoche salva nel log una modifica effettuata su un paziente da parte di un diabetologo, gestendo la sezione critica
     public synchronized void scriviLog(String rigaLog) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(pathLog, true))) {
             writer.write(rigaLog);
@@ -356,6 +366,7 @@ public class GestoreFile {
         }
     }
 
+    //metodo che ritorna la lista dei pazienti affidati a un diabetologo specifico
     public List<Paziente> pazientiPerMedico(String cfMedico) {
         if (cfMedico == null || cfMedico.trim().isEmpty()) {
             return new ArrayList<>();
@@ -373,6 +384,7 @@ public class GestoreFile {
                 return new ArrayList<>();
             }
 
+            //ritorna i pazienti filtrati dalla stream completa
             return tuttiPazienti.stream()
                     .filter(p -> p.getTerapie() != null && p.getTerapie().stream()
                             .anyMatch(t -> t.getMedicoPrescrittore() != null
@@ -385,6 +397,7 @@ public class GestoreFile {
         }
     }
 
+    //metodo che ritorna un paziente cercato per email
     public Paziente pazientePerMail(String email) {
         if (email == null || email.trim().isEmpty()) {
             return null;
