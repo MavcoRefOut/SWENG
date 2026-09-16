@@ -1,7 +1,7 @@
 package org.example;
 
 import java.time.LocalDate;
-
+//fabbrica per generare sintomi tramite factory method
 public class CreatoreSintomo extends CreatoreSegnalazione{
 
     @Override
