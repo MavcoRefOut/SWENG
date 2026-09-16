@@ -9,19 +9,25 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
+//facade dell'interfaccia per l'utilizzo del pattern Facade per gestire l'interazione con file system
 public class Facciata implements InterfacciaFacciata{
 
+    //gestore del file
     private GestoreFile gestore;
 
+    //costruttore della facade
     public Facciata(){
         gestore = new GestoreFile();
     }
+
+    //serie di override dei metodi già presenti in GestoreFile
+    
     @Override
     public Persona cercaPersona(String username, String password) {
         return gestore.cercaPerCredenziali(username,password);
     }
 
+    
     @Override
     public void verificaAderenzaTerapie(Diabetologo diabetologo) throws IOException {
         List<Paziente> listaPazienti = gestore.pazientiPerMedico(diabetologo.getCodiceFiscale());
@@ -29,6 +35,7 @@ public class Facciata implements InterfacciaFacciata{
             p.verificaAderenzaTerapie(true);
     }
 
+   
     @Override
     public Paziente cercaPazientePerNomeCognome(String nome, String cognome) {
         return gestore.cercaPazientePerNomeCognome(nome, cognome);
