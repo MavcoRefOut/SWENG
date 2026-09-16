@@ -1,7 +1,7 @@
 package org.example;
 
 import java.time.LocalDate;
-
+//fabbrica per generare patologie tramite factory method
 public class CreatorePatologia extends CreatoreSegnalazione{
     @Override
     public Segnalazione factoryMethod(LocalDate dataInizio, LocalDate dataFine, String descrizione, Object... parametri) {
