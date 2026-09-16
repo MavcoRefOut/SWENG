@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+//gestore della form di login
 public class ControlloreLogin {
 
     private InterfacciaFacciata f;
@@ -29,17 +29,20 @@ public class ControlloreLogin {
     public void settaDatiLogin(InterfacciaFacciata f){
         this.f = f;
     }
-
+    
     @FXML
     private void FaiLogin(ActionEvent event) {
+        //credenziali per il login
         String username = textUsername.getText().trim();
         String password = textPassword.getText().trim();
 
+        //controllo l'inserimento delle credenziali
         if (username.isEmpty() || password.isEmpty()) {
             mostraMessErrore("Compilare sia username che password.");
             return;
         }
 
+        //prova a verificare la correttezza delle credenziali inserite gestendo eccezioni
         try {
             Persona utente = f.cercaPersona(username, password);
 
@@ -51,6 +54,7 @@ public class ControlloreLogin {
             FXMLLoader loader;
             Parent root;
 
+            //se le credenziali corrispondono a quelle di un diabetologo viene aperta la form del diabetologo
             if (utente instanceof Diabetologo) {
                 loader = new FXMLLoader(getClass().getResource("/formDiabetologo.fxml"));
                 root = loader.load();
@@ -58,6 +62,7 @@ public class ControlloreLogin {
                 ControlloreDiabetologo controller = loader.getController();
                 controller.settaDatiDiabetologo((Diabetologo) utente, f);
             } else if (utente instanceof Paziente) {
+                //se le credenziali corrispondono a quelle di un paziente viene aperta la form del paziente
                 loader = new FXMLLoader(getClass().getResource("/formPaziente.fxml"));
                 root = loader.load();
 
@@ -72,6 +77,7 @@ public class ControlloreLogin {
             newStage.setScene(new Scene(root));
             newStage.show();
 
+            //viene visualizzata la form corretta
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             currentStage.close();
 
